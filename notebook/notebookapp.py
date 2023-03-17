@@ -32,6 +32,7 @@ import threading
 import time
 import warnings
 import webbrowser
+import junoapp
 
 try:
     import resource
@@ -1324,13 +1325,15 @@ class NotebookApp(JupyterApp):
     def nbextensions_path(self):
         """The path to look for Javascript notebook extensions"""
         path = self.extra_nbextensions_path + jupyter_path('nbextensions')
+        # IPython nbextensions paths are empty in Juno anyway
+        #
         # FIXME: remove IPython nbextensions path after a migration period
-        try:
-            from IPython.paths import get_ipython_dir
-        except ImportError:
-            pass
-        else:
-            path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
+        # try:
+        #     from IPython.paths import get_ipython_dir
+        # except ImportError:
+        #     pass
+        # else:
+        #     path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
         return path
 
     websocket_url = Unicode("", config=True,
@@ -2129,10 +2132,10 @@ class NotebookApp(JupyterApp):
         self.init_components()
         self.init_webapp()
         self.init_terminals()
-        self.init_signal()
+        # self.init_signal()
         self.init_server_extensions()
         self.init_mime_overrides()
-        self.init_shutdown_no_activity()
+        # self.init_shutdown_no_activity()
 
     def cleanup_kernels(self):
         """Shutdown all kernels.
@@ -2345,6 +2348,7 @@ class NotebookApp(JupyterApp):
                         '    %s' % self.display_url,
                     ]))
 
+        junoapp.notebook_server_finished_launching(self._concat_token(self._tcp_url(self.ip)))
         self.io_loop = ioloop.IOLoop.current()
         if sys.platform.startswith('win'):
             # add no-op to wake every 5s

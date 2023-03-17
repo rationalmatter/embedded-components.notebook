@@ -20,6 +20,8 @@ from traitlets import Instance
 from notebook.utils import maybe_future
 from notebook.traittypes import InstanceFromClasses
 
+import junoapp
+
 class SessionManager(LoggingConfigurable):
 
     kernel_manager = Instance('notebook.services.kernels.kernelmanager.MappingKernelManager')
@@ -110,6 +112,7 @@ class SessionManager(LoggingConfigurable):
         kernel_id = yield maybe_future(
             self.kernel_manager.start_kernel(path=kernel_path, kernel_name=kernel_name)
         )
+        junoapp.session_manager_assigned_kernel_id(kernel_id, path)
         # py2-compat
         raise gen.Return(kernel_id)
 

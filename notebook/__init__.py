@@ -24,5 +24,6 @@ DEFAULT_NOTEBOOK_PORT = 8888
 
 del os
 
-from .nbextensions import install_nbextension
+# Don't import anything related to nbextensions as they are currently not supported in Juno
+# from .nbextensions import install_nbextension
 from ._version import version_info, __version__

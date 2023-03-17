@@ -2716,7 +2716,7 @@ define([
      */
     Notebook.prototype.save_notebook = function (check_last_modified) {
         if (check_last_modified === undefined) {
-            check_last_modified = true;
+            check_last_modified = false;
         }
 
         var error;
@@ -2744,7 +2744,7 @@ define([
 
         var that = this;
         var _save = function () {
-            return that.contents.save(that.notebook_path, model).then(
+            return window.webkit.messageHandlers.saveNotebookFileUpdatingContents.postMessage(JSON.stringify(model.content)).then(
                 $.proxy(that.save_notebook_success, that, start),
                 function (error) {
                     that.events.trigger('notebook_save_failed.Notebook', error);
@@ -2755,7 +2755,7 @@ define([
         };
 
         if (check_last_modified) {
-            return this.contents.get(this.notebook_path, {content: false}).then(
+            return window.webkit.messageHandlers.getNotebookFileModifiedDate.postMessage('').then(
                 function (data) {
                     var last_modified = new Date(data.last_modified);
                     var last_modified_check_margin = (that.config.data['last_modified_check_margin'] || 0.5) * 1000; // 500 ms

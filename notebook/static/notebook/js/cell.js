@@ -17,8 +17,9 @@ define([
     'codemirror/addon/edit/matchbrackets',
     'codemirror/addon/edit/closebrackets',
     'codemirror/addon/comment/comment',
+    'codemirror/addon/selection/active-line-notebook-cell',
     'services/config',
-], function($, utils, i18n, CodeMirror, cm_match, cm_closeb, cm_comment, configmod) {
+], function($, utils, i18n, CodeMirror, cm_match, cm_closeb, cm_comment, cm_activeline, configmod) {
     "use strict";
     
     var overlayHack = CodeMirror.scrollbarModel.native.prototype.overlayHack;
@@ -127,6 +128,8 @@ define([
         cm_config : {
             indentUnit : 4,
             readOnly: false,
+            styleActiveLine: true,
+            fixedGutter: false,
             theme: "default",
             extraKeys: {
                 "Cmd-Right": "goLineRight",

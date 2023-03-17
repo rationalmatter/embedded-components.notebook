@@ -31,7 +31,30 @@
         } else if (pythonConf.version === 2) {
             pythonConf.identifiers = new RegExp("^[_A-Za-z][_A-Za-z0-9]*");
         }
-        return CodeMirror.getMode(conf, pythonConf);
+        // Jupyter extends Python mode with additional configuration; we
+        // extend Jupyter's ipython mode by making sure there is no 
+        // non-styled text in the CodeMirror editor, i.e. that all text
+        // is in some <span> element. We do this by overriding ipython
+        // mode's token function, returning dummy style when ipython 
+        // detects none. This is needed due to a WebKit bug in iOS, which
+        // renders caret funny in some cases.
+        var ipythonMode = CodeMirror.getMode(conf, pythonConf);
+        return {
+            startState: function(basecolumn) {
+                return ipythonMode.startState(basecolumn);
+            },
+            token: function(stream, state) {
+                var superToken = ipythonMode.token(stream, state);
+                return superToken ? superToken : "notoken";
+            },
+            indent: function(state, textAfter) {
+                return ipythonMode.indent(state, textAfter);
+            },
+            electricInput: ipythonMode.electricInput,
+            closeBrackets: ipythonMode.closeBrackets,
+            lineComment: ipythonMode.lineComment,
+            fold: ipythonMode.fold
+        };
     }, 'python');
 
     CodeMirror.defineMIME("text/x-ipython", "ipython");

@@ -38,7 +38,6 @@ define(['jquery',
      *
      **/
     var modal = function (options) {
-
         var modal = $("<div/>")
             .addClass("modal")
             .addClass("fade")
@@ -148,14 +147,23 @@ define(['jquery',
     };
 
     var kernel_modal = function (options) {
+        var title = options.title || '';
+        var body = '';
+        if(typeof(options.body) === 'string'){
+            body = options.body;
+        }
+        console.log('Requested kernel modal with title: %s, body: %s', title, body);
+        if (window.webkit.messageHandlers.kernelModal) {
+            window.webkit.messageHandlers.kernelModal.postMessage({ title: title, body: body });
+        }
         /**
          * only one kernel dialog should be open at a time -- but
          * other modal dialogs can still be open
          */
-        $('.kernel-modal').modal('hide');
-        var dialog = modal(options);
-        dialog.addClass('kernel-modal');
-        return dialog;
+        // $('.kernel-modal').modal('hide');
+        // var dialog = modal(options);
+        // dialog.addClass('kernel-modal');
+        // return dialog;
     };
 
     var edit_metadata = function (options) {

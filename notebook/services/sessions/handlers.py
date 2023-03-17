@@ -14,7 +14,7 @@ from ...base.handlers import APIHandler
 from jupyter_client.jsonutil import date_default
 from notebook.utils import maybe_future, url_path_join
 from jupyter_client.kernelspec import NoSuchKernel
-
+import junoapp
 
 class SessionRootHandler(APIHandler):
 
@@ -62,6 +62,14 @@ class SessionRootHandler(APIHandler):
             kernel_name = None
 
         exists = yield maybe_future(sm.session_exists(path=path))
+
+        # Juno doesn't attempt to reuse notebook sessions, if we ended up with an existing session this is likely a mistake, e.g. reopening a recently closed notebook.
+        if exists:
+            junoapp.log(f'Attempted to reuse session for notebook {path}. Reconnecting to existing sessions is not supported in Juno; deleting and creating a new session instead.')
+            model = yield maybe_future(sm.get_session(path=path))
+            sm.delete_session(model['id'])
+            exists = False
+
         if exists:
             model = yield maybe_future(sm.get_session(path=path))
         else:
