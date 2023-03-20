@@ -6,6 +6,7 @@ import re
 
 # Version string must appear intact for tbump versioning
 __version__ = '6.5.3'
+__version__ = __version__ + '+juno'
 
 # Build up version_info tuple for backwards compatibility
 pattern = r'(?P<major>\d+).(?P<minor>\d+).(?P<patch>\d+)(?P<rest>.*)'
